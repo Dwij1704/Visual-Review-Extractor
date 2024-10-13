@@ -1,52 +1,65 @@
-# Node.js Visual Scraper Application
+# Node.js Application for Visual Scraping
 
-## Overview
-
-This Node.js application implements a visual scraping solution designed to extract reviews from product pages. The application consists of a backend with two APIs and a frontend built using HTML, CSS, JavaScript, and Bootstrap. The backend is containerized and deployed on an AWS EC2 instance, providing a robust environment for executing scraping tasks.
-
-### Key Features
-- **Two APIs**:
-  1. **Review Extraction API**: Retrieves reviews from specified URLs by capturing screenshots of the web pages and analyzing them using the OpenAI API.
-  2. **Logs API**: Provides access to server logs for monitoring and debugging purposes.
-
-- **Frontend**: The user interface is developed using HTML, CSS, JavaScript, and Bootstrap, allowing users to interact with the scraping functionality easily.
+This Node.js application features a simple visual scraper that extracts reviews from product pages using Playwright. It has two APIs and a frontend built with HTML, CSS, JavaScript, and Bootstrap. The application is containerized using Docker and deployed on AWS EC2.
 
 ## Application Flow
 
-1. **Frontend Interaction**: Users input the URL of the product page they want to scrape on the frontend interface. This is done using a simple HTML form.
+1. **Frontend**: The frontend allows users to enter a product URL and initiate the review extraction process.
+2. **API Endpoints**:
+   - **Extract Reviews API**: 
+     - **Endpoint**: `POST /api/reviews`
+     - **Description**: Accepts a product URL and extracts reviews using Playwright.
+     - **Usage**: 
+       - Send a POST request to `/api/reviews` with the product URL in the body.
+   - **Logs API**:
+     - **Endpoint**: `GET /api/logs`
+     - **Description**: Fetches the logs of review extraction attempts.
 
-2. **Review Extraction API**: Upon form submission, a GET request is made to the Review Extraction API with the specified URL. The server handles this request by:
-   - Launching a browser instance using Playwright.
-   - Navigating to the specified URL and capturing multiple screenshots of the page content.
-   - Converting the screenshots into base64-encoded images.
+## cURL Commands
 
-3. **Image Analysis**: The application sends the captured screenshots to the OpenAI API for analysis. The API extracts reviews based on the provided prompt and returns the results in a structured JSON format.
+To interact with the APIs, you can use the following cURL commands:
 
-4. **Response**: The extracted reviews are sent back to the frontend, where they are displayed to the user. Additionally, any errors encountered during the scraping or analysis process are logged and can be accessed through the Logs API.
-
-### Visual Scraping Approach
-
-The application uses a visual scraping approach by capturing screenshots of web pages and analyzing them instead of directly parsing HTML content. This method can handle dynamic content more effectively, although it has limitations:
-- **Pagination Handling**: The application currently lacks pagination handling, meaning it may not extract all reviews from pages that require navigation to multiple views.
-- **CSS Selector Identification**: The application does not include functionality for dynamically identifying CSS selectors, which can impact its ability to scrape content from various websites effectively.
-- **Incompatibility with Modal Rendering**: Some websites that render content in modal windows may not be compatible with this visual scraping approach, limiting the effectiveness of the application in certain scenarios.
-
-## Docker Setup
-
-To run the application, you will need to build and start the Docker container using the following commands:
-
-1. **Build the Docker Image**:
+1. **Extract Reviews**:
    ```bash
-   docker build -t visual-scraper .
+   curl --location 'http://localhost:5000/api/reviews?page=https%3A%2F%2Fsokoglam.com%2Fproducts%2Fim-from-rice-toner-150ml'
    ```
 
-2. **Run the Docker Container**:
+2. **Fetch Logs**:
    ```bash
-   docker run -d -p 5000:5000 --env-file .env visual-scraper
+   curl --location 'http://localhost:5000/api/logs'
    ```
 
-> **Note**: Ensure to replace `OPENAI_API_KEY` in the `.env` file with your actual OpenAI API key to enable the application to communicate with the OpenAI API.
+## Setup and Run
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Dwij1704/Visual-Review-Extractor
+   cd Visual-Review-Extractor
+   ```
+
+2. **Replace the OpenAI API key**:
+   Make sure to replace the `OPENAI_API_KEY` in your `.env` file with your actual key.
+
+3. **Build the Docker image**:
+   ```bash
+   docker build -t Visual-Review-Extractor .
+   ```
+
+4. **Run the Docker container**:
+   ```bash
+   docker run -p 5000:5000 Visual-Review-Extractor
+   ```
+
+The application will be accessible at `http://localhost:5000`.
+
+
+## Limitations
+
+- **Pagination Handling**: The application does not currently support pagination for scraping multiple pages of reviews, which may limit the amount of data extracted from product listings.
+- **CSS Selector Identification**: There is no mechanism for dynamic CSS selector identification, meaning the scraper may fail to locate reviews on pages where the structure changes frequently.
+- **Modal Rendering Compatibility**: The application is incompatible with certain sites that use modal rendering for displaying product details and reviews. This may result in incomplete data extraction or errors during the scraping process.
+- **Error Handling**: While basic error handling is implemented, more robust handling could improve the user experience and provide clearer feedback on issues encountered during scraping.
 
 ## Conclusion
 
-This Node.js visual scraper application provides a functional approach to extracting product reviews from various web pages. While it effectively utilizes visual scraping techniques, future improvements could include handling pagination, identifying CSS selectors dynamically, and enhancing compatibility with modal-rendering sites.
+This project demonstrates a simple yet effective approach to web scraping using visual techniques. Your feedback is highly appreciated!
